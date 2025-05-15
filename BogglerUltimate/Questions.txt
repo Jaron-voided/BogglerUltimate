@@ -1,0 +1,1 @@
+1) Should I always use factories instead of default constructors? Like....ALWAYS!?!?
