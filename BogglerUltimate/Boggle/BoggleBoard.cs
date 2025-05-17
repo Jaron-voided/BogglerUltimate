@@ -9,7 +9,7 @@ public class BoggleBoard
     
     private readonly BoggleDice _boggleDice;
 
-    private BoggleBoard(BoggleDice boggleDice)
+    internal BoggleBoard(BoggleDice boggleDice)
     {
         _boggleDice = boggleDice;
     }
@@ -35,6 +35,18 @@ public class BoggleBoard
         }
         return newBoard;
     }
+    
+    public IEnumerable<Position> GetBoardPositions()
+    {
+        for (int x = 0; x < 4; x++)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                yield return new Position(x, y);
+            }
+        }
+    }
+
 
     public override string ToString()
     {
@@ -70,7 +82,7 @@ internal class Directions
 
     internal bool[] visited = new bool[16];
 
-    internal static IEnumerable<Direction> EnumerateDirections(int x, int y, bool[] visited)
+    internal static IEnumerable<Direction> EnumerateDirections(Position pos, VisitHistory visitHistory)
     {
         for (int i = 0; i < All.Length; i++)
         {
@@ -78,15 +90,15 @@ internal class Directions
             var d= All[i];
             
             // Takes your current spot and adds the direction X and Y to it
-            int newX = x + d.DX;
-            int newY = y + d.DY;
+            int newX = pos.X + d.DX;
+            int newY =pos.Y + d.DY;
             
             // Ensures the direction is not off the board in any way
-            if (newX < 0 || newX >= visited.Length || newY < 0 || newY >= visited.Length)
+            if (newX < 0 || newX >= BoardSize || newY < 0 || newY >= BoardSize)
                 continue;
             
             // Ensures the spot has not been visited yet
-            if (visited[newY * 4 + newX])
+            if (visitHistory.IsVisited(pos))
                 continue;
             
             // Returns the direction if its not off the board nor has been visited yet
@@ -118,7 +130,7 @@ public struct Position
         Y = y;
     }
 
-    internal Position CheckMove(Direction direction)
+    internal Position PossibleMove(Direction direction)
     {
         Position pos = new Position();
         pos.X = X + direction.DX;
@@ -133,15 +145,66 @@ public struct Position
     }
 }
 
-public struct VisitHistory
+struct VisitHistory
+{
+    const int boardSize = 4;
+    internal int History;
+    int LastVisited;
+
+    public VisitHistory Visit(Position pos)
+    {
+        int index = pos.Y * boardSize + pos.X;
+        History |= (1 << index);
+        LastVisited = 0;
+        LastVisited |= (1 << index);
+        PrintVisited();
+
+        return this;
+    }
+
+    public bool IsVisited(Position pos)
+    {
+        int index = pos.Y * boardSize + pos.X;
+        if (index < 0 || index >= boardSize * boardSize)
+            return true;
+        return (History & (1 << index)) != 0;
+    }
+
+    public bool IsLastVisited(Position pos)
+    {
+        int index = pos.Y * boardSize + pos.X;
+        if (index < 0 || index >= boardSize * boardSize)
+            return true;
+        return (LastVisited & (1 << index)) != 0;
+    }
+
+    public void PrintVisited()
+    {
+        for (int y = 0; y < boardSize; y++)
+        {
+            for (int x = 0; x < boardSize; x++)
+            {
+                Position pos = new Position(x, y);
+                if (IsLastVisited(pos))
+                    Console.Write("X");
+                else
+                    Console.Write(IsVisited(pos) ? "*" : "_");
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
+/*public struct VisitHistory
 {
     private const int BoardSize = 4;
     private int History;
 
-    internal void Visit(Position position/*int x, int y*/)
+    internal void Visit(Position position/*int x, int y#1#)
     {
         int index = position.Y * BoardSize + position.X;
-        History |= (1 << index);
+        History |= (1 << index);        
     }
 
     internal bool IsVisited(Position position)
@@ -159,4 +222,4 @@ public struct VisitHistory
         }
         return visited;
     }
-}
+}*/

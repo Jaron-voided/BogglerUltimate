@@ -5,12 +5,12 @@ namespace BogglerUltimate.Iterators;
 
 public class BoardIterator
 {
-    private readonly BoggleBoard _board;
-    private readonly VisitHistory _visitHistory;
-    private Position _current;
+    internal readonly BoggleBoard _board;
+    internal readonly VisitHistory _visitHistory;
+    internal Position _current;
     
     internal int Depth { get; set; }
-    internal char[] WordBuffer = new char[16];
+    //internal char[] WordBuffer = new char[16];
     
     // Should this be a factory
     public BoardIterator(BoggleBoard board, Position start)
@@ -21,7 +21,7 @@ public class BoardIterator
         Depth = 0;
     }
 
-    internal void AddLetter(BoggleDie die)
+    /*internal void AddLetter(BoggleDie die)
     {
         bool isQu = die.SelectedFace[0] == 'Q';
 
@@ -35,7 +35,7 @@ public class BoardIterator
             Depth++;
             WordBuffer[Depth] = 'U';
         }
-    }
+    }*/
 
     internal void MoveSpot(Direction direction)
     {
@@ -78,10 +78,10 @@ public class BoardIterator
         return foundWords;
     }
 
-    internal HashSet<string> ExplorePathInternal(TrieIterator trieIterator, HashSet<string> foundWords,
+    /*internal HashSet<string> ExplorePathInternal(TrieIterator trieIterator, HashSet<string> foundWords,
         Position current, int depth)
     {
         throw new NotImplementedException();
-    }
+    }*/
     
 }
