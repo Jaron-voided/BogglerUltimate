@@ -7,7 +7,7 @@ public class WordFinder
 {
     private BoardIterator BoardIterator { get; init; }
     private TrieIterator TrieIterator { get; init; }
-    private WordState Word { get; init; }
+    private WordState Word { get; init; } = new WordState();
 
     public WordFinder(BoardIterator boardIterator, TrieIterator trieIterator)
     {
@@ -15,11 +15,11 @@ public class WordFinder
         TrieIterator = trieIterator;
     }
 
-    public void FindWords(Position pos)
+    public HashSet<string> FindWords(Position pos)
     {
         VisitHistory visitHistory = new();
         Word.Clear();
-        FindWords(pos, visitHistory);
+        return FindWords(pos, visitHistory);
     }
 
     HashSet<string> FindWords(Position pos, VisitHistory visitHistory)
@@ -35,6 +35,7 @@ public class WordFinder
         // increments depth while adding the letter to WordState._wordBuffer
         BoardIterator.Depth = Word.AddLetter(letter, BoardIterator.Depth);
         TrieIterator.Traverse(letter);
+
         if (TrieIterator.IsWord())
         {
             string newWord = Word.AddWord();
@@ -50,7 +51,8 @@ public class WordFinder
         {
             // Check to see if the position in the direction is viable
             Position possiblePosition = pos.PossibleMove(direction);
-            if (BoardIterator.CheckSpot(TrieIterator, possiblePosition))
+
+            if (!visitHistory.IsVisited(possiblePosition) && BoardIterator.CheckSpot(TrieIterator, possiblePosition))
             {
                 BoardIterator.MoveSpot(direction);
                 FindWords(BoardIterator._current, visitHistory);

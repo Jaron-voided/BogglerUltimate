@@ -51,7 +51,7 @@ public class BoardIterator
         return trieIterator._current.HasChild(face);
     }
 
-    internal HashSet<string> ExplorePath(BoggleTrie trie)
+    /*internal HashSet<string> ExplorePath(BoggleTrie trie)
     {
         TrieIterator trieIterator = new TrieIterator(trie);
         HashSet<string> foundWords = new HashSet<string>();
@@ -76,7 +76,7 @@ public class BoardIterator
         }
         
         return foundWords;
-    }
+    }*/
 
     /*internal HashSet<string> ExplorePathInternal(TrieIterator trieIterator, HashSet<string> foundWords,
         Position current, int depth)
